@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- This xml file is for the Fody Build all dependencies into the toolbox.dll -->
+<Weavers>
+  <Costura>
+    <Target
+    AfterTargets="AfterBuild;NonWinFodyTarget"
+    Name="CleanReferenceCopyLocalPaths" >
+      <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+    </Target>
+  </Costura>
+  
+</Weavers>

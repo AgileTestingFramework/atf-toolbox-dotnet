@@ -12,6 +12,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3E8B5D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "atf.toolbox", "atf.toolbox\atf.toolbox.csproj", "{D54F0BE7-8C76-44BA-BD0B-213BD0BCA7D0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testRunConfiguration", "testRunConfiguration", "{A59B68F7-6090-4454-9CC4-F85FE1347405}"
+	ProjectSection(SolutionItems) = preProject
+		testRunConfiguration\formSettings.config = testRunConfiguration\formSettings.config
+		testRunConfiguration\mobileSettings.config = testRunConfiguration\mobileSettings.config
+		testRunConfiguration\reportSettings.config = testRunConfiguration\reportSettings.config
+		testRunConfiguration\webDriverSettings.config = testRunConfiguration\webDriverSettings.config
+		testRunConfiguration\webSettings.config = testRunConfiguration\webSettings.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

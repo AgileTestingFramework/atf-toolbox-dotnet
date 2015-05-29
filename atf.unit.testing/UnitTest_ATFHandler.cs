@@ -9,6 +9,7 @@ using System.Threading;
 namespace atf.unit.testing
 {
     [TestClass]
+    [Ignore]
     public class UnitTest_ATFHandler
     {
         [TestMethod]
@@ -45,7 +46,7 @@ namespace atf.unit.testing
         }
 
         [TestMethod]
-        [Ignore]
+        //[Ignore]
         // This is not a unit test
         public void WebAutomationWebDriverQuits()
         {
