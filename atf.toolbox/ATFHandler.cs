@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Xml;
 
 namespace atf.toolbox
 {
@@ -33,6 +34,66 @@ namespace atf.toolbox
                 _testContextInstance = value;
             }
         }
+
+        /// <summary>
+        /// Check if Web Automation was activated
+        /// </summary>
+        public bool IsWebAutomationActive { 
+            get 
+            {
+                if (_webAutomationInstance == null) return false;
+                else return true;
+            } 
+        }
+
+        /// <summary>
+        /// Check if Mobile Automation was activated
+        /// </summary>
+        public bool IsMobileAutomationActive
+        {
+            get
+            {
+                if (_mobileDriverInstance == null) return false;
+                else return true;
+            }
+        }
+
+        /// <summary>
+        /// Check if Form Automation was activated
+        /// </summary>
+        public bool IsFormAutomationActive
+        {
+            get
+            {
+                if (_formsAutomationInstance == null) return false;
+                else return true;
+            }
+        }
+
+        /// <summary>
+        /// Check if Database Automation was activated
+        /// </summary>
+        public bool IsDatabaseAutomationActive
+        {
+            get
+            {
+                if (_databaseAutomationInstance == null) return false;
+                else return true;
+            }
+        }
+
+        /// <summary>
+        /// Check if Image Automation was activated
+        /// </summary>
+        public bool IsImageAutomationActive
+        {
+            get
+            {
+                if (_imageRecognitionInstance == null) return false;
+                else return true;
+            }
+        }
+
 
         #region ATFHandler Singleton Implementation
         private static readonly ATFHandler instance = new ATFHandler();
@@ -69,7 +130,20 @@ namespace atf.toolbox
                 _Configuration.Add(key, config);
             }
         }
-        
+
+        /**
+        public void ChangeConfiguration(string configurationSection, string key, string value)
+        {
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+
+            xmlDoc.SelectSingleNode("//" + configurationSection + "[@key='" + key + "']").Attributes["value"].Value = value;
+            xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+
+            ConfigurationManager.RefreshSection(configurationSection+"/"+key);
+        }
+         **/
+
         /// <summary>
         /// Configuration
         /// </summary>

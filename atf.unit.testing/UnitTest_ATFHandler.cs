@@ -1,8 +1,10 @@
 ﻿using atf.toolbox;
+using atf.toolbox.configuration;
 using atf.toolbox.managers;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
 
@@ -12,6 +14,14 @@ namespace atf.unit.testing
     [Ignore]
     public class UnitTest_ATFHandler
     {
+        [TestMethod]
+        public void ChangeConfigTest()
+        {
+            System.Configuration.Configuration config =  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            FormSettings frmSettings = (FormSettings)config.GetSection("FormSettings");
+            frmSettings.ApplicationDirectory = "somethingNew";
+            config.Save();
+        }
         [TestMethod]
         public void ATFHandlerTest()
         {
@@ -27,7 +37,7 @@ namespace atf.unit.testing
         }
 
         [TestMethod]
-        //[Ignore]
+        [Ignore]
         // not a unit test
         public void WebAutomationIsSingleton()
         {
@@ -38,7 +48,7 @@ namespace atf.unit.testing
         }
 
         [TestMethod]
-        [Ignore]
+        //[Ignore]
         // This is not a unit test
         public void WebAutomationWebDriverStarts()
         { 
@@ -51,6 +61,13 @@ namespace atf.unit.testing
         public void WebAutomationWebDriverQuits()
         {
             ATFHandler.Instance.WebAutomation.WebDriver.Navigate().GoToUrl("http://www.agiletestingframework.com");
+            ATFHandler.Instance.TearDown();
+        }
+
+        [TestMethod]
+        public void FormsAutomationApplicationQuits()
+        {
+            string name = ATFHandler.Instance.FormAutomation.ApplicationDriver.Name;
             ATFHandler.Instance.TearDown();
         }
 

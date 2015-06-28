@@ -32,5 +32,13 @@ namespace atf.toolbox.configuration
             }
             set { this["jserrorcollection-with-firefox"] = value; }
         }
+
+
+        [ConfigurationProperty("screenshot-directory", IsRequired = false)]
+        public string ScreenshotDirectory
+        {
+            get { return this["screenshot-directory"].ToString().Trim(); }
+            set { this["screenshot-directory"] = value; }
+        }
     }
 }

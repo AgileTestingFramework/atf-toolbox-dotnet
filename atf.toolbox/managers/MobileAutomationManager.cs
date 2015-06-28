@@ -24,6 +24,7 @@ namespace atf.toolbox.managers
         private ProcessStartInfo AppiumServerProcessStartInfo;
 
         public IWebDriver MobileDriver { get; set; }
+        public ITakesScreenshot TakesScreenShot { get { return ((ITakesScreenshot)MobileDriver); } }
 
         /// <summary>
         /// WebDriverConfiguration
@@ -95,9 +96,9 @@ namespace atf.toolbox.managers
 
         private void SetIOSCapabilities(DesiredCapabilities caps)
         {
-            if (MobileConfiguration.IOSCalendarFormat.Length != 0)
+            if (MobileConfiguration.IOSCalendarFormat != string.Empty)
                 caps.SetCapability("calendarFormat", MobileConfiguration.IOSCalendarFormat);
-            if (MobileConfiguration.IOSBundleId.Length != 0)
+            if (MobileConfiguration.IOSBundleId != string.Empty)
                 caps.SetCapability("bundleId", MobileConfiguration.IOSBundleId);
             if (MobileConfiguration.IOSLaunchTimeout != null)
                 caps.SetCapability("launchTimeout", MobileConfiguration.IOSLaunchTimeout);
@@ -113,7 +114,7 @@ namespace atf.toolbox.managers
                 caps.SetCapability("nativeInstrumentsLib", MobileConfiguration.IOSNativeInstrumentsLib.Value);
             if (MobileConfiguration.IOSNativeWebTap != null)
                 caps.SetCapability("nativeWebTap", MobileConfiguration.IOSNativeWebTap.Value);
-            if (MobileConfiguration.IOSSafariInitialUrl.Length != 0)
+            if (MobileConfiguration.IOSSafariInitialUrl != string.Empty)
                 caps.SetCapability("safariInitialUrl", MobileConfiguration.IOSSafariInitialUrl);
             if (MobileConfiguration.IOSSafariAllowPopups != null)
                 caps.SetCapability("safariAllowPopups", MobileConfiguration.IOSSafariAllowPopups.Value);
@@ -123,15 +124,15 @@ namespace atf.toolbox.managers
                 caps.SetCapability("safariOpenLinksInBackground", MobileConfiguration.IOSSafariOpenLinksInBackground.Value);
             if (MobileConfiguration.IOSKeepKeyChains != null)
                 caps.SetCapability("keepKeyChains", MobileConfiguration.IOSKeepKeyChains.Value);
-            if (MobileConfiguration.IOSLocalizableStringsDirectory.Length != 0)
+            if (MobileConfiguration.IOSLocalizableStringsDirectory != string.Empty)
                 caps.SetCapability("localizableStringsDir", MobileConfiguration.IOSLocalizableStringsDirectory);
-            if (MobileConfiguration.IOSProcessArguments.Length != 0)
+            if (MobileConfiguration.IOSProcessArguments != string.Empty)
                 caps.SetCapability("processArguments", MobileConfiguration.IOSProcessArguments);
             if (MobileConfiguration.IOSInterKeyDelay != null)
                 caps.SetCapability("interKeyDelay", MobileConfiguration.IOSInterKeyDelay.Value);
             if (MobileConfiguration.IOSShowIOSLog != null)
                 caps.SetCapability("showIOSLog", MobileConfiguration.IOSShowIOSLog.Value);
-            if (MobileConfiguration.IOSSendKeyStrategy.Length != 0)
+            if (MobileConfiguration.IOSSendKeyStrategy != string.Empty)
                 caps.SetCapability("sendKeyStrategy", MobileConfiguration.IOSSendKeyStrategy);
             if (MobileConfiguration.IOSScreenShotWaitTimeout != null)
                 caps.SetCapability("screenshotWaitTimeout", MobileConfiguration.IOSScreenShotWaitTimeout);
@@ -141,13 +142,13 @@ namespace atf.toolbox.managers
 
         private void SetAndroidCapabilities(DesiredCapabilities caps)
         {
-            if (MobileConfiguration.AndroidAppActivity.Length != 0)
+            if (MobileConfiguration.AndroidAppActivity != string.Empty)
                 caps.SetCapability("appActivity", MobileConfiguration.AndroidAppActivity);
-            if (MobileConfiguration.AndroidAppPackage.Length != 0)
+            if (MobileConfiguration.AndroidAppPackage != string.Empty)
                 caps.SetCapability("appPackage", MobileConfiguration.AndroidAppPackage);
-            if (MobileConfiguration.AndroidAppWaitActivity.Length != 0)
+            if (MobileConfiguration.AndroidAppWaitActivity != string.Empty)
                 caps.SetCapability("appWaitActivity", MobileConfiguration.AndroidAppWaitActivity);
-            if (MobileConfiguration.AndroidAppWaitPackage.Length != 0)
+            if (MobileConfiguration.AndroidAppWaitPackage != string.Empty)
                 caps.SetCapability("appWaitPackage", MobileConfiguration.AndroidAppWaitPackage);
             if (MobileConfiguration.AndroidReadyTimeout != null)
                 caps.SetCapability("deviceReadyTimeout", MobileConfiguration.AndroidReadyTimeout);
@@ -167,34 +168,34 @@ namespace atf.toolbox.managers
                     caps.SetCapability("avdLaunchTimeout", (MobileConfiguration.AndroidAVDLaunchTimeout * 1000));
                 if (MobileConfiguration.AndroidAVDReadyTimeout != null)
                     caps.SetCapability("avdReadyTimeout", (MobileConfiguration.AndroidAVDReadyTimeout * 1000));
-                if (MobileConfiguration.AndroidAVDArguments.Length != 0)
+                if (MobileConfiguration.AndroidAVDArguments != string.Empty)
                     caps.SetCapability("avdArgs", MobileConfiguration.AndroidAVDArguments);
             }
 
             if (MobileConfiguration.AndroidUseKeystore != null && MobileConfiguration.AndroidUseKeystore.Value)
             {
                 caps.SetCapability("useKeystore", MobileConfiguration.AndroidUseKeystore.Value);
-                if (MobileConfiguration.AndroidKeystorePath.Length != 0)
+                if (MobileConfiguration.AndroidKeystorePath != string.Empty)
                     caps.SetCapability("keystorePath", MobileConfiguration.AndroidKeystorePath);
-                if (MobileConfiguration.AndroidKeystorePassword.Length != 0)
+                if (MobileConfiguration.AndroidKeystorePassword != string.Empty)
                     caps.SetCapability("keystorePassword", MobileConfiguration.AndroidKeystorePassword);
             }
 
-            if (MobileConfiguration.AndroidKeyAlias.Length != 0)
+            if (MobileConfiguration.AndroidKeyAlias != string.Empty)
                 caps.SetCapability("keyAlias", MobileConfiguration.AndroidKeyAlias);
-            if (MobileConfiguration.AndroidKeyPassword.Length != 0)
+            if (MobileConfiguration.AndroidKeyPassword != string.Empty)
                 caps.SetCapability("keyPassword", MobileConfiguration.AndroidKeyPassword);
-            if (MobileConfiguration.AndroidChromeDriverExecutable.Length != 0)
+            if (MobileConfiguration.AndroidChromeDriverExecutable != string.Empty)
                 caps.SetCapability("chromedriverExecutable", MobileConfiguration.AndroidChromeDriverExecutable);
             if (MobileConfiguration.AndroidAutoWebViewTimeout != null)
                 caps.SetCapability("autoWebviewTimeout", MobileConfiguration.AndroidAutoWebViewTimeout);
-            if (MobileConfiguration.AndroidIntentAction.Length != 0)
+            if (MobileConfiguration.AndroidIntentAction != string.Empty)
                 caps.SetCapability("intentAction", MobileConfiguration.AndroidIntentAction);
-            if (MobileConfiguration.AndroidIntentCategory.Length != 0)
+            if (MobileConfiguration.AndroidIntentCategory != string.Empty)
                 caps.SetCapability("intentCategory", MobileConfiguration.AndroidIntentCategory);
-            if (MobileConfiguration.AndroidIntentFlags.Length != 0)
+            if (MobileConfiguration.AndroidIntentFlags != string.Empty)
                 caps.SetCapability("intentFlags", MobileConfiguration.AndroidIntentFlags);
-            if (MobileConfiguration.AndroidOptionalIntentArguments.Length != 0)
+            if (MobileConfiguration.AndroidOptionalIntentArguments != string.Empty)
                 caps.SetCapability("optionalIntentArguments", MobileConfiguration.AndroidOptionalIntentArguments);
             if (MobileConfiguration.AndroidStopAppOnReset != null)
                 caps.SetCapability("stopAppOnReset", MobileConfiguration.AndroidStopAppOnReset.Value);
@@ -219,31 +220,31 @@ namespace atf.toolbox.managers
 
             if (ATFHandler.Instance.TestContext != null)
                 caps.SetCapability("name", ATFHandler.Instance.TestContext.TestName);
-            if (MobileConfiguration.AppiumVersion.Length != 0)
+            if (MobileConfiguration.AppiumVersion != string.Empty)
                 caps.SetCapability("appiumVersion", MobileConfiguration.AppiumVersion);
-            if (MobileConfiguration.AutomationName.Length != 0)
+            if (MobileConfiguration.AutomationName != string.Empty)
                 caps.SetCapability("automationName", MobileConfiguration.AutomationName);
-            if (MobileConfiguration.Platform.Length != 0)
+            if (MobileConfiguration.Platform != string.Empty)
                 caps.SetCapability("platformName", MobileConfiguration.Platform);
-            if (MobileConfiguration.Version.Length != 0)
+            if (MobileConfiguration.Version != string.Empty)
                 caps.SetCapability("platformVersion", MobileConfiguration.Version);
-            if (MobileConfiguration.DeviceName.Length != 0)
+            if (MobileConfiguration.DeviceName != string.Empty)
                 caps.SetCapability("deviceName", MobileConfiguration.DeviceName);
-            if (MobileConfiguration.DeviceType.Length != 0)
+            if (MobileConfiguration.DeviceType != string.Empty)
                 caps.SetCapability("deviceType", MobileConfiguration.DeviceType);
-            if (MobileConfiguration.App.Length != 0)
+            if (MobileConfiguration.App != string.Empty)
                 caps.SetCapability("app", MobileConfiguration.App);
-            if (MobileConfiguration.BrowserName.Length != 0)
+            if (MobileConfiguration.BrowserName != string.Empty)
                 caps.SetCapability("browserName", MobileConfiguration.BrowserName);
             if (MobileConfiguration.NewCommandTimeout != null)
                 caps.SetCapability("newCommandTimeout", MobileConfiguration.NewCommandTimeout);
-            if (MobileConfiguration.Language.Length != 0)
+            if (MobileConfiguration.Language != string.Empty)
                 caps.SetCapability("language", MobileConfiguration.Language);
-            if (MobileConfiguration.Locale.Length != 0)
+            if (MobileConfiguration.Locale != string.Empty)
                 caps.SetCapability("locale", MobileConfiguration.Locale);
-            if (MobileConfiguration.UDID.Length != 0)
+            if (MobileConfiguration.UDID != string.Empty)
                 caps.SetCapability("udid", MobileConfiguration.UDID);
-            if (MobileConfiguration.Orientation.Length != 0)
+            if (MobileConfiguration.Orientation != string.Empty)
                 caps.SetCapability("orientation", MobileConfiguration.Orientation);
             if (MobileConfiguration.AutoLaunch != null)
                 caps.SetCapability("autoLaunch", MobileConfiguration.AutoLaunch.Value);

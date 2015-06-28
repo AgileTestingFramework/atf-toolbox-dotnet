@@ -53,6 +53,12 @@ namespace atf.toolbox.managers
         
         }
 
+        public void ApplicationLaunch()
+        {
+            TearDown();
+            ApplicationDriver = ApplicationSetup();
+        }
+        
         private Application ApplicationSetup()
         { 
             return ApplicationSetup(true, null, null, null, null);
@@ -113,14 +119,17 @@ namespace atf.toolbox.managers
             catch (ArgumentNullException ane)
             {
                 _log.Error("Error initializing form driver. Null encountered.", ane);
+                throw ane;
             }
             catch (WhiteException we)
             {
                 _log.Error("Error initializing form driver.", we);
+                throw we;
             }
             catch (Exception ex)
             {
                 _log.Error("Unknown Error initializing form driver.", ex);
+                throw ex;
             }
 
             return application;
