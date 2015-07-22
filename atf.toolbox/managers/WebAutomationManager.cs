@@ -31,6 +31,15 @@ namespace atf.toolbox.managers
             get { return (WebDriverSettings)ConfigurationManager.GetSection("WebDriverSettings"); }
         }
 
+        /// <summary>
+        /// WebConfiguration
+        /// Configuration section WebSettings
+        /// </summary>
+        public WebSettings WebConfiguration
+        {
+            get { return (WebSettings)ConfigurationManager.GetSection("WebSettings"); }
+        }
+
         public WebAutomationManager()
         {
             WebDriver = WebDriverSetup();
