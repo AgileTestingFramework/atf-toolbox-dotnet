@@ -1,5 +1,4 @@
 ﻿using log4net;
-using SikuliModule;
 
 namespace atf.toolbox.managers
 {

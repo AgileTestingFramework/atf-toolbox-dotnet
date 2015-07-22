@@ -1,18 +1,15 @@
 ﻿using atf.toolbox.configuration;
-using atf.toolbox;
 using log4net;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Appium.Android;
-using OpenQA.Selenium.Appium.iOS;
-using OpenQA.Selenium.Remote;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Support.UI;
 
 namespace atf.toolbox.managers
 {
@@ -76,7 +73,7 @@ namespace atf.toolbox.managers
                 SetCommonCapabilities(caps);
                 SetIOSCapabilities(caps);
 
-                localwebDriver = new IOSDriver(addressUri, caps, TimeSpan.FromSeconds(120));
+                localwebDriver = new IOSDriver<AppiumWebElement>(addressUri, caps, TimeSpan.FromSeconds(120));
                 _log.Info("IOS Driver loaded.");
 
                 return localwebDriver;
@@ -88,7 +85,7 @@ namespace atf.toolbox.managers
                 SetCommonCapabilities(caps);
                 SetAndroidCapabilities(caps);
 
-                localwebDriver = new AndroidDriver(addressUri, caps, TimeSpan.FromSeconds(500));
+                localwebDriver = new AndroidDriver<AppiumWebElement>(addressUri, caps, TimeSpan.FromSeconds(500));
                 _log.Info("Android Driver loaded.");
                 return localwebDriver;
             }
