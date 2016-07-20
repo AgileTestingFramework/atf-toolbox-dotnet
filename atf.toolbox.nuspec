@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>atf.toolbox</id>
+    <version>5.0.1</version>
+    <authors>Kristen Varona kristen@agiletestingframework.com,Stephen Rufle stephen@agiletestingframework.com</authors>
+    <owners>Kristen Varona kristen@agiletestingframework.com,Stephen Rufle stephen@agiletestingframework.com</owners>
+    <licenseUrl>https://github.com/AgileTestingFramework/atf-toolbox-dotnet/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/AgileTestingFramework/atf-toolbox-dotnet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ATF Toolbox .NET version</description>
+    <releaseNotes>Initial public release</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>Testing ATF AgileTestingFramework</tags>
+	<dependencies>
+      <dependency id="Appium.WebDriver" version="1.3.0.1" />
+      <dependency id="FluentAssertions" version="3.4.1" />
+      <dependency id="JSErrorCollector" version="0.6.1" />
+      <dependency id="log4net" version="2.0.3" />
+      <dependency id="TestStack.White" version="0.13.3" />
+    </dependencies>
+  </metadata>
+	<files>
+	  <file src="atf.toolbox\bin\Debug\atf.toolbox*.dll" target="lib\net45" /> 
+	  <file src="atf.toolbox\bin\Debug\atf.toolbox*.pdb" target="lib\net45" /> 
+	  <file src="atf.toolbox\bin\Debug\atf.toolbox*.xml" target="lib\net45" />
+	  <file src="atf.toolbox\bin\Debug\atf.toolbox*.config" target="lib\net45" /> 
+	  <file src="testRunConfiguration\*.config" target="testRunConfiguration" /> 
+	</files>
+</package>
