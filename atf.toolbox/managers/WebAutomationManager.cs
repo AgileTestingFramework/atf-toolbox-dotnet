@@ -65,6 +65,7 @@ namespace atf.toolbox.managers
         private IWebDriver WebDriverSetup()
         {
             IWebDriver driver = null;
+
             DesiredCapabilities capabilities = DesiredCapabilities.Firefox();
 
             // Configure Candidate Browser Information
@@ -101,7 +102,7 @@ namespace atf.toolbox.managers
 			        }
 
                     break;
-
+                    
                 case "internetexplorer":
                     InternetExplorerOptions ieOptions = new InternetExplorerOptions();
                     capabilities = DesiredCapabilities.InternetExplorer();
@@ -208,9 +209,9 @@ namespace atf.toolbox.managers
              _log.Info(string.Format("Using browser: {0}, with getCapabilities: {1}", driver.ToString(), ((RemoteWebDriver)driver).Capabilities.ToString()));
 
             ITimeouts timeouts = driver.Manage().Timeouts();
-            timeouts.ImplicitlyWait(TimeSpan.FromSeconds(1));
-            timeouts.SetScriptTimeout(TimeSpan.FromSeconds(AtfConstant.WAIT_TIME_LARGE));
-            timeouts.SetPageLoadTimeout(TimeSpan.FromSeconds(AtfConstant.WAIT_TIME_EXTRA_LARGE));
+            timeouts.ImplicitWait = TimeSpan.FromSeconds(1);
+            timeouts.AsynchronousJavaScript = TimeSpan.FromSeconds(AtfConstant.WAIT_TIME_LARGE);
+            timeouts.PageLoad=TimeSpan.FromSeconds(AtfConstant.WAIT_TIME_EXTRA_LARGE);
 
             driver.Manage().Window.Maximize();
 
