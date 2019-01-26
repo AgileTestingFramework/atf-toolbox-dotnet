@@ -67,8 +67,12 @@ namespace atf.toolbox.managers
             if (MobileConfiguration.Platform.ToLower().Trim() == "ios")
             {
                 if (MobileConfiguration.DeviceType.ToLower().Contains("iphone"))
-                    caps = DesiredCapabilities.IPhone();
-                else caps = DesiredCapabilities.IPad();
+                {
+                    caps.SetCapability("platformName", "iOS"); // was DesiredCapabilities.IPhone();
+                }
+                else {
+                    caps.SetCapability("platformName", "iOS"); // was DesiredCapabilities.IPad();
+                }
 
                 SetCommonCapabilities(caps);
                 SetIOSCapabilities(caps);
@@ -80,7 +84,7 @@ namespace atf.toolbox.managers
             }
             else // Android is the default
             {
-                caps = DesiredCapabilities.Android(); // Set Android Defaults to start
+                caps.SetCapability("platformName", "android"); // was DesiredCapabilities.Android();
 
                 SetCommonCapabilities(caps);
                 SetAndroidCapabilities(caps);

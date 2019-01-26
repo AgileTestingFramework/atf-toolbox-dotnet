@@ -5,7 +5,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
-using OpenQA.Selenium.PhantomJS;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Safari;
 using System;
@@ -19,7 +18,7 @@ namespace atf.toolbox.managers
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(WebAutomationManager));
 
-        public IWebDriver WebDriver {get; set;}
+        public IWebDriver WebDriver { get; set; }
         public ITakesScreenshot TakesScreenShot { get { return ((ITakesScreenshot)WebDriver); } }
 
         /// <summary>
@@ -65,21 +64,22 @@ namespace atf.toolbox.managers
         private IWebDriver WebDriverSetup()
         {
             IWebDriver driver = null;
-
-            DesiredCapabilities capabilities = DesiredCapabilities.Firefox();
+            DriverOptions options = new FirefoxOptions();
 
             // Configure Candidate Browser Information
             String browserName = WebDriverConfiguration.BrowserName;
             switch (browserName.ToLower())
             {
                 case "firefox":
-                    capabilities = DesiredCapabilities.Firefox();
-                    capabilities = SetCommonCapabilities(capabilities);
+                    OpenQA.Selenium.DriverOptions ffOptions = new FirefoxOptions();
+                    ffOptions = SetCommonOptions(ffOptions);
 
-                    FirefoxBinary binary = null;
-                    if (WebDriverConfiguration.FirefoxBinary != string.Empty) { binary = new FirefoxBinary(WebDriverConfiguration.FirefoxBinary); }
+                    if (WebDriverConfiguration.FirefoxBinary != string.Empty) {
+                        //binary = new FirefoxBinary(WebDriverConfiguration.FirefoxBinary);
+                        ((FirefoxOptions)ffOptions).BrowserExecutableLocation = WebDriverConfiguration.FirefoxBinary;
+                    }
 
-			        FirefoxProfile profile = null;
+                    FirefoxProfile profile = null;
                     if (WebDriverConfiguration.BrowserDownloadPath != string.Empty) { profile = new FirefoxProfile(WebDriverConfiguration.BrowserDownloadPath); }
 
                     if (WebDriverConfiguration.FirefoxWebdriverAcceptUntrustedCerts != null) profile.SetPreference("webdriver_accept_untrusted_certs", WebDriverConfiguration.FirefoxWebdriverAcceptUntrustedCerts.Value);
@@ -87,71 +87,70 @@ namespace atf.toolbox.managers
                     if (WebDriverConfiguration.FirefoxWebdriverLogDriver != string.Empty) profile.SetPreference("webdriver.log.driver", WebDriverConfiguration.FirefoxWebdriverLogDriver);
                     if (WebDriverConfiguration.FirefoxWebdriverLogFile != string.Empty) profile.SetPreference("webdriver.log.file", WebDriverConfiguration.FirefoxWebdriverLogFile);
                     if (WebDriverConfiguration.FirefoxWebdriverLoadStrategy != string.Empty) profile.SetPreference("webdriver.load.strategy", WebDriverConfiguration.FirefoxWebdriverLoadStrategy);
-			        if (WebDriverConfiguration.FirefoxWebdriverPort != null) profile.SetPreference("webdriver_firefox_port", WebDriverConfiguration.FirefoxWebdriverPort.Value);
-			        capabilities.SetCapability(FirefoxDriver.ProfileCapabilityName, profile);
+                    if (WebDriverConfiguration.FirefoxWebdriverPort != null) profile.SetPreference("webdriver_firefox_port", WebDriverConfiguration.FirefoxWebdriverPort.Value);
 
-			        if (WebDriverConfiguration.FirefoxRCMode != null) capabilities.SetCapability("mode", WebDriverConfiguration.FirefoxRCMode.Value);
-			        if (WebDriverConfiguration.FirefoxRCCaptureNetworkTraffic != null) capabilities.SetCapability("captureNetworkTraffic", WebDriverConfiguration.FirefoxRCCaptureNetworkTraffic.Value);
-			        if (WebDriverConfiguration.FirefoxRCAddCustomRequestHeader != null) capabilities.SetCapability("addCustomRequestHeaders", WebDriverConfiguration.FirefoxRCAddCustomRequestHeader.Value);
-			        if (WebDriverConfiguration.FirefoxTrustAllSSLCerts != null) capabilities.SetCapability("trustAllSSLCertificates", WebDriverConfiguration.FirefoxTrustAllSSLCerts.Value);
+                    ((FirefoxOptions)ffOptions).Profile = profile;
+
+			        if (WebDriverConfiguration.FirefoxRCMode != null) ffOptions.AddAdditionalCapability("mode", WebDriverConfiguration.FirefoxRCMode.Value);
+			        if (WebDriverConfiguration.FirefoxRCCaptureNetworkTraffic != null) ffOptions.AddAdditionalCapability("captureNetworkTraffic", WebDriverConfiguration.FirefoxRCCaptureNetworkTraffic.Value);
+			        if (WebDriverConfiguration.FirefoxRCAddCustomRequestHeader != null) ffOptions.AddAdditionalCapability("addCustomRequestHeaders", WebDriverConfiguration.FirefoxRCAddCustomRequestHeader.Value);
+			        if (WebDriverConfiguration.FirefoxTrustAllSSLCerts != null) ffOptions.AddAdditionalCapability("trustAllSSLCertificates", WebDriverConfiguration.FirefoxTrustAllSSLCerts.Value);
 
 			        if (WebDriverConfiguration.UseGrid != null && !WebDriverConfiguration.UseGrid.Value)
 			        {
-                        if (binary !=null || profile != null) {driver = new FirefoxDriver(binary, profile);}
-                        else {driver = new FirefoxDriver(capabilities);}
+                        driver = new FirefoxDriver((FirefoxOptions)ffOptions);
 			        }
 
                     break;
                     
                 case "internetexplorer":
-                    InternetExplorerOptions ieOptions = new InternetExplorerOptions();
-                    capabilities = DesiredCapabilities.InternetExplorer();
-			        capabilities = SetCommonCapabilities(capabilities);
+                    DriverOptions ieOptions = new InternetExplorerOptions();
+                    ieOptions = SetCommonOptions(ieOptions);
 
 
 
 
-			        if (WebDriverConfiguration.IEIgnoreProtectedModeSettings != null) ieOptions.AddAdditionalCapability("ignoreProtectedModeSettings", WebDriverConfiguration.IEIgnoreProtectedModeSettings.Value);
-			        if (WebDriverConfiguration.IEIgnoreZoomSetting != null) ieOptions.IgnoreZoomLevel = WebDriverConfiguration.IEIgnoreZoomSetting.Value;
-			        if (WebDriverConfiguration.IEInitialBrowserURL != string.Empty) ieOptions.InitialBrowserUrl = WebDriverConfiguration.IEInitialBrowserURL;
-			        if (WebDriverConfiguration.IEEnablePersistentHover != null) ieOptions.EnablePersistentHover = WebDriverConfiguration.IEEnablePersistentHover.Value;
-			        if (WebDriverConfiguration.IEEnableElementCacheCleanup != null) ieOptions.AddAdditionalCapability("enableElementCacheCleanup", WebDriverConfiguration.IEEnableElementCacheCleanup.Value);
-			        if (WebDriverConfiguration.IERequireWindowFocus != null) ieOptions.RequireWindowFocus = WebDriverConfiguration.IERequireWindowFocus.Value;
-			        if (WebDriverConfiguration.IEBrowserAttachTimeout != null) ieOptions.BrowserAttachTimeout = TimeSpan.FromSeconds(WebDriverConfiguration.IEBrowserAttachTimeout.Value);
-			        if (WebDriverConfiguration.IEForceCreateProcessAPI != null) ieOptions.ForceCreateProcessApi = WebDriverConfiguration.IEForceCreateProcessAPI.Value;
-			        if (WebDriverConfiguration.IEBrowserCMDLineSwitches != string.Empty) ieOptions.BrowserCommandLineArguments = WebDriverConfiguration.IEBrowserCMDLineSwitches;
-			        if (WebDriverConfiguration.IEUsePerProcessProxy != null) ieOptions.UsePerProcessProxy = WebDriverConfiguration.IEUsePerProcessProxy.Value;
-			        if (WebDriverConfiguration.IEEnsureCleanSession != null) ieOptions.EnsureCleanSession = WebDriverConfiguration.IEEnsureCleanSession.Value;
-			        if (WebDriverConfiguration.IELogFile !=string.Empty) ieOptions.AddAdditionalCapability("logFile", WebDriverConfiguration.IELogFile);
-			        if (WebDriverConfiguration.IELogLevel !=string.Empty) ieOptions.AddAdditionalCapability("logLevel", WebDriverConfiguration.IELogLevel);
-			        if (WebDriverConfiguration.IEHost !=string.Empty) ieOptions.AddAdditionalCapability("host", WebDriverConfiguration.IEHost);
-			        if (WebDriverConfiguration.IEExtractPath !=string.Empty) ieOptions.AddAdditionalCapability("extractPath", WebDriverConfiguration.IEExtractPath);
-			        if (WebDriverConfiguration.IESilent != null) ieOptions.AddAdditionalCapability("silent", WebDriverConfiguration.IESilent.Value);
-			        if (WebDriverConfiguration.IESetProxyByServer != null) ieOptions.AddAdditionalCapability("ie.setProxyByServer", WebDriverConfiguration.IESetProxyByServer.Value);
+			        if (WebDriverConfiguration.IEIgnoreProtectedModeSettings != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("ignoreProtectedModeSettings", WebDriverConfiguration.IEIgnoreProtectedModeSettings.Value);
+			        if (WebDriverConfiguration.IEIgnoreZoomSetting != null) ((InternetExplorerOptions)ieOptions).IgnoreZoomLevel = WebDriverConfiguration.IEIgnoreZoomSetting.Value;
+			        if (WebDriverConfiguration.IEInitialBrowserURL != string.Empty) ((InternetExplorerOptions)ieOptions).InitialBrowserUrl = WebDriverConfiguration.IEInitialBrowserURL;
+			        if (WebDriverConfiguration.IEEnablePersistentHover != null) ((InternetExplorerOptions)ieOptions).EnablePersistentHover = WebDriverConfiguration.IEEnablePersistentHover.Value;
+			        if (WebDriverConfiguration.IEEnableElementCacheCleanup != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("enableElementCacheCleanup", WebDriverConfiguration.IEEnableElementCacheCleanup.Value);
+			        if (WebDriverConfiguration.IERequireWindowFocus != null) ((InternetExplorerOptions)ieOptions).RequireWindowFocus = WebDriverConfiguration.IERequireWindowFocus.Value;
+			        if (WebDriverConfiguration.IEBrowserAttachTimeout != null) ((InternetExplorerOptions)ieOptions).BrowserAttachTimeout = TimeSpan.FromSeconds(WebDriverConfiguration.IEBrowserAttachTimeout.Value);
+			        if (WebDriverConfiguration.IEForceCreateProcessAPI != null) ((InternetExplorerOptions)ieOptions).ForceCreateProcessApi = WebDriverConfiguration.IEForceCreateProcessAPI.Value;
+			        if (WebDriverConfiguration.IEBrowserCMDLineSwitches != string.Empty) ((InternetExplorerOptions)ieOptions).BrowserCommandLineArguments = WebDriverConfiguration.IEBrowserCMDLineSwitches;
+			        if (WebDriverConfiguration.IEUsePerProcessProxy != null) ((InternetExplorerOptions)ieOptions).UsePerProcessProxy = WebDriverConfiguration.IEUsePerProcessProxy.Value;
+			        if (WebDriverConfiguration.IEEnsureCleanSession != null) ((InternetExplorerOptions)ieOptions).EnsureCleanSession = WebDriverConfiguration.IEEnsureCleanSession.Value;
+			        if (WebDriverConfiguration.IELogFile !=string.Empty) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("logFile", WebDriverConfiguration.IELogFile);
+			        if (WebDriverConfiguration.IELogLevel !=string.Empty) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("logLevel", WebDriverConfiguration.IELogLevel);
+			        if (WebDriverConfiguration.IEHost !=string.Empty) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("host", WebDriverConfiguration.IEHost);
+			        if (WebDriverConfiguration.IEExtractPath !=string.Empty) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("extractPath", WebDriverConfiguration.IEExtractPath);
+			        if (WebDriverConfiguration.IESilent != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("silent", WebDriverConfiguration.IESilent.Value);
+			        if (WebDriverConfiguration.IESetProxyByServer != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("ie.setProxyByServer", WebDriverConfiguration.IESetProxyByServer.Value);
 
-			        if (WebDriverConfiguration.IERCMode !=string.Empty) ieOptions.AddAdditionalCapability("mode", WebDriverConfiguration.IERCMode);
-			        if (WebDriverConfiguration.IERCKillProcessesByName != null) ieOptions.AddAdditionalCapability("killProcessesByName", WebDriverConfiguration.IERCKillProcessesByName.Value);
-			        if (WebDriverConfiguration.IERCHonorSystemProxy != null) ieOptions.AddAdditionalCapability("honorSystemProxy", WebDriverConfiguration.IERCHonorSystemProxy.Value);
-			        if (WebDriverConfiguration.IERCEnsureCleanSession != null) ieOptions.AddAdditionalCapability("ensureCleanSession", WebDriverConfiguration.IERCEnsureCleanSession.Value);
+			        if (WebDriverConfiguration.IERCMode !=string.Empty) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("mode", WebDriverConfiguration.IERCMode);
+			        if (WebDriverConfiguration.IERCKillProcessesByName != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("killProcessesByName", WebDriverConfiguration.IERCKillProcessesByName.Value);
+			        if (WebDriverConfiguration.IERCHonorSystemProxy != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("honorSystemProxy", WebDriverConfiguration.IERCHonorSystemProxy.Value);
+			        if (WebDriverConfiguration.IERCEnsureCleanSession != null) ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("ensureCleanSession", WebDriverConfiguration.IERCEnsureCleanSession.Value);
 
 			        if (WebDriverConfiguration.UseGrid != null && !WebDriverConfiguration.UseGrid.Value)
 			        {
                         if (WebDriverConfiguration.BrowserDownloadPath != string.Empty)
                         {
-                            ieOptions.AddAdditionalCapability("webdriver.ie.driver", WebDriverConfiguration.BrowserDownloadPath);
-                            driver = new InternetExplorerDriver(WebDriverConfiguration.BrowserDownloadPath, ieOptions);
+                            ((InternetExplorerOptions)ieOptions).AddAdditionalCapability("webdriver.ie.driver", WebDriverConfiguration.BrowserDownloadPath);
+                            driver = new InternetExplorerDriver(WebDriverConfiguration.BrowserDownloadPath, ((InternetExplorerOptions)ieOptions));
                         }
-                        else driver = new InternetExplorerDriver(ieOptions);
+                        else driver = new InternetExplorerDriver(((InternetExplorerOptions)ieOptions));
 			        }
                     break;
 
                 case "chrome":
-                    capabilities = DesiredCapabilities.Chrome();
-			        capabilities = SetCommonCapabilities(capabilities);
+                    DriverOptions chromeOptions = new ChromeOptions();
+                    chromeOptions = SetCommonOptions(chromeOptions);
 
-			        ChromeOptions options = new ChromeOptions();
-			        if (WebDriverConfiguration.ChromeOptionsArgs != string.Empty) options.AddArguments(WebDriverConfiguration.ChromeOptionsArgs);
-			        if (WebDriverConfiguration.ChromeOptionsBinary != string.Empty) options.BinaryLocation = WebDriverConfiguration.ChromeOptionsBinary;
+			        //ChromeOptions options = new ChromeOptions();
+			        if (WebDriverConfiguration.ChromeOptionsArgs != string.Empty) ((ChromeOptions)chromeOptions).AddArguments(WebDriverConfiguration.ChromeOptionsArgs);
+			        if (WebDriverConfiguration.ChromeOptionsBinary != string.Empty) ((ChromeOptions)chromeOptions).BinaryLocation = WebDriverConfiguration.ChromeOptionsBinary;
 			        if (WebDriverConfiguration.ChromeOptionsExtentions != null)
 			        {
 				        List<String> fileExtensions = new List<String>();
@@ -162,24 +161,23 @@ namespace atf.toolbox.managers
 						        fileExtensions.Add(extension);
 					        }
 				        }
-				        options.AddExtensions(fileExtensions);
+                        ((ChromeOptions)chromeOptions).AddExtensions(fileExtensions);
 			        }
-			        capabilities.SetCapability(ChromeOptions.Capability, options);
 
 			        if (WebDriverConfiguration.ChromeProxy !=string.Empty)
 			        {
 				        Proxy proxy = new Proxy();
 				        proxy.HttpProxy = WebDriverConfiguration.ChromeProxy;
-				        capabilities.SetCapability("proxy", proxy);
+                        ((ChromeOptions)chromeOptions).AddAdditionalCapability("proxy", proxy);
 			        }
 
 			        if (WebDriverConfiguration.UseGrid != null && !WebDriverConfiguration.UseGrid.Value)
 			        {
                         if (WebDriverConfiguration.BrowserDownloadPath != string.Empty)
                         {
-                            driver = new ChromeDriver(WebDriverConfiguration.BrowserDownloadPath, options);
+                            driver = new ChromeDriver(WebDriverConfiguration.BrowserDownloadPath, (ChromeOptions)chromeOptions);
                         }
-                        else driver = new ChromeDriver(options);
+                        else driver = new ChromeDriver((ChromeOptions)chromeOptions);
 			        }
                     break;
 
@@ -203,7 +201,7 @@ namespace atf.toolbox.managers
             // We need to use a remote webdriver instead
             if (WebDriverConfiguration.UseGrid != null && WebDriverConfiguration.UseGrid.Value)
             {
-                driver = new RemoteWebDriver(capabilities);
+                driver = new RemoteWebDriver(options);
             }
 
              _log.Info(string.Format("Using browser: {0}, with getCapabilities: {1}", driver.ToString(), ((RemoteWebDriver)driver).Capabilities.ToString()));
@@ -219,7 +217,9 @@ namespace atf.toolbox.managers
             return driver;
         }
 
-        private DesiredCapabilities SetCommonCapabilities(DesiredCapabilities capabilities)
+         
+
+        private DriverOptions SetCommonOptions(DriverOptions options)
         {
             string browserName = WebDriverConfiguration.BrowserName;
             string version = WebDriverConfiguration.BrowserVersion;
@@ -231,63 +231,63 @@ namespace atf.toolbox.managers
             {
                 if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("win"))
                 {
-                    capabilities.SetCapability("platform", new Platform(PlatformType.Windows));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.Windows));
                 }
                 else if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("linux"))
                 {
-                    capabilities.SetCapability("platform", new Platform(PlatformType.Linux));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.Linux));
                 }
                 else if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("mac"))
                 {
-                    capabilities.SetCapability("platform",new Platform(PlatformType.Mac));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.Mac));
                 }
                 else if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("XP"))
                 {
-                    capabilities.SetCapability("platform", new Platform(PlatformType.XP));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.XP));
                 }
                 else if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("unix"))
                 {
-                    capabilities.SetCapability("platform", new Platform(PlatformType.Unix));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.Unix));
                 }
                 else if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("Vista"))
                 {
-                    capabilities.SetCapability("platform", new Platform(PlatformType.Vista));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.Vista));
                 }
                 else if (WebDriverConfiguration.BrowserPlatform.ToLower().Contains("android"))
                 {
-                    capabilities.SetCapability("platform", new Platform(PlatformType.Android));
+                    options.AddAdditionalCapability("platform", new Platform(PlatformType.Android));
                 }
             }
 
-            capabilities = new DesiredCapabilities(browserName, version, platform);
+            //options = new DesiredCapabilities(browserName, version, platform);
 
-            if (WebDriverConfiguration.BrowserVersion != string.Empty) capabilities.SetCapability("browserVersion", WebDriverConfiguration.BrowserVersion);
-            if (WebDriverConfiguration.TakesScreenshot != null) capabilities.SetCapability("takesScreenshot", WebDriverConfiguration.TakesScreenshot);
-            if (WebDriverConfiguration.HandlesAlerts != null) capabilities.SetCapability("handlesAlerts", WebDriverConfiguration.HandlesAlerts);
-            if (WebDriverConfiguration.CSSSelectorsEnabled != null) capabilities.SetCapability("cssSelectorsEnabled", WebDriverConfiguration.CSSSelectorsEnabled);
-            if (WebDriverConfiguration.JavascriptEnabled != null) capabilities.SetCapability("javascriptEnabled", WebDriverConfiguration.JavascriptEnabled);
-            if (WebDriverConfiguration.DatabaseEnabled != null) capabilities.SetCapability("databaseEnabled", WebDriverConfiguration.DatabaseEnabled);
-            if (WebDriverConfiguration.LocationContextEnabled != null) capabilities.SetCapability("locationContextEnabled", WebDriverConfiguration.LocationContextEnabled);
-            if (WebDriverConfiguration.ApplicationCacheEnabled != null) capabilities.SetCapability("applicationCacheEnabled", WebDriverConfiguration.ApplicationCacheEnabled);
-            if (WebDriverConfiguration.BrowserConnectionEnabled != null) capabilities.SetCapability("browserConnectionEnabled", WebDriverConfiguration.BrowserConnectionEnabled);
-            if (WebDriverConfiguration.WebStorageEnabled != null) capabilities.SetCapability("webStorageEnabled", WebDriverConfiguration.WebStorageEnabled);
-            if (WebDriverConfiguration.AcceptSSLCerts != null) capabilities.SetCapability("acceptSslCerts", WebDriverConfiguration.AcceptSSLCerts);
-            if (WebDriverConfiguration.Rotatable != null) capabilities.SetCapability("rotatable", WebDriverConfiguration.Rotatable);
-            if (WebDriverConfiguration.NativeEvents != null) capabilities.SetCapability("nativeEvents", WebDriverConfiguration.NativeEvents);
-            if (WebDriverConfiguration.UnexpectedAlertBehavior != null) capabilities.SetCapability("unexpectedAlertBehaviour", WebDriverConfiguration.UnexpectedAlertBehavior);
-            if (WebDriverConfiguration.ElementScrollBehavior != null) capabilities.SetCapability("elementScrollBehavior", WebDriverConfiguration.ElementScrollBehavior);
+            if (WebDriverConfiguration.BrowserVersion != string.Empty) options.AddAdditionalCapability("browserVersion", WebDriverConfiguration.BrowserVersion);
+            if (WebDriverConfiguration.TakesScreenshot != null) options.AddAdditionalCapability("takesScreenshot", WebDriverConfiguration.TakesScreenshot);
+            if (WebDriverConfiguration.HandlesAlerts != null) options.AddAdditionalCapability("handlesAlerts", WebDriverConfiguration.HandlesAlerts);
+            if (WebDriverConfiguration.CSSSelectorsEnabled != null) options.AddAdditionalCapability("cssSelectorsEnabled", WebDriverConfiguration.CSSSelectorsEnabled);
+            if (WebDriverConfiguration.JavascriptEnabled != null) options.AddAdditionalCapability("javascriptEnabled", WebDriverConfiguration.JavascriptEnabled);
+            if (WebDriverConfiguration.DatabaseEnabled != null) options.AddAdditionalCapability("databaseEnabled", WebDriverConfiguration.DatabaseEnabled);
+            if (WebDriverConfiguration.LocationContextEnabled != null) options.AddAdditionalCapability("locationContextEnabled", WebDriverConfiguration.LocationContextEnabled);
+            if (WebDriverConfiguration.ApplicationCacheEnabled != null) options.AddAdditionalCapability("applicationCacheEnabled", WebDriverConfiguration.ApplicationCacheEnabled);
+            if (WebDriverConfiguration.BrowserConnectionEnabled != null) options.AddAdditionalCapability("browserConnectionEnabled", WebDriverConfiguration.BrowserConnectionEnabled);
+            if (WebDriverConfiguration.WebStorageEnabled != null) options.AddAdditionalCapability("webStorageEnabled", WebDriverConfiguration.WebStorageEnabled);
+            if (WebDriverConfiguration.AcceptSSLCerts != null) options.AddAdditionalCapability("acceptSslCerts", WebDriverConfiguration.AcceptSSLCerts);
+            if (WebDriverConfiguration.Rotatable != null) options.AddAdditionalCapability("rotatable", WebDriverConfiguration.Rotatable);
+            if (WebDriverConfiguration.NativeEvents != null) options.AddAdditionalCapability("nativeEvents", WebDriverConfiguration.NativeEvents);
+            if (WebDriverConfiguration.UnexpectedAlertBehavior != null) options.AddAdditionalCapability("unexpectedAlertBehaviour", WebDriverConfiguration.UnexpectedAlertBehavior);
+            if (WebDriverConfiguration.ElementScrollBehavior != null) options.AddAdditionalCapability("elementScrollBehavior", WebDriverConfiguration.ElementScrollBehavior);
 
             // JSON Proxy
-            if (WebDriverConfiguration.JSONProxyType != string.Empty) capabilities.SetCapability("proxyType", WebDriverConfiguration.JSONProxyType);
-            if (WebDriverConfiguration.JSONProxyAutoConfigURL != string.Empty) capabilities.SetCapability("proxyAutoconfigUrl", WebDriverConfiguration.JSONProxyAutoConfigURL);
-            if (WebDriverConfiguration.JSONProxy != string.Empty) capabilities.SetCapability(WebDriverConfiguration.JSONProxy, WebDriverConfiguration.JSONProxy);
-            if (WebDriverConfiguration.JSONSocksUsername != string.Empty) capabilities.SetCapability("socksUsername", WebDriverConfiguration.JSONSocksUsername);
-            if (WebDriverConfiguration.JSONSocksPassword != string.Empty) capabilities.SetCapability("socksPassword", WebDriverConfiguration.JSONSocksPassword);
-            if (WebDriverConfiguration.JSONNoProxy != null) capabilities.SetCapability("noProxy", WebDriverConfiguration.JSONNoProxy);
-            if (WebDriverConfiguration.JSONLoggingComponent != string.Empty) capabilities.SetCapability("component", WebDriverConfiguration.JSONLoggingComponent);
-            if (WebDriverConfiguration.RemoteWebdriverRemoteQuietExceptions != null) capabilities.SetCapability("webdriver.remote.quietExceptions", WebDriverConfiguration.RemoteWebdriverRemoteQuietExceptions);
+            if (WebDriverConfiguration.JSONProxyType != string.Empty) options.AddAdditionalCapability("proxyType", WebDriverConfiguration.JSONProxyType);
+            if (WebDriverConfiguration.JSONProxyAutoConfigURL != string.Empty) options.AddAdditionalCapability("proxyAutoconfigUrl", WebDriverConfiguration.JSONProxyAutoConfigURL);
+            if (WebDriverConfiguration.JSONProxy != string.Empty) options.AddAdditionalCapability(WebDriverConfiguration.JSONProxy, WebDriverConfiguration.JSONProxy);
+            if (WebDriverConfiguration.JSONSocksUsername != string.Empty) options.AddAdditionalCapability("socksUsername", WebDriverConfiguration.JSONSocksUsername);
+            if (WebDriverConfiguration.JSONSocksPassword != string.Empty) options.AddAdditionalCapability("socksPassword", WebDriverConfiguration.JSONSocksPassword);
+            if (WebDriverConfiguration.JSONNoProxy != null) options.AddAdditionalCapability("noProxy", WebDriverConfiguration.JSONNoProxy);
+            if (WebDriverConfiguration.JSONLoggingComponent != string.Empty) options.AddAdditionalCapability("component", WebDriverConfiguration.JSONLoggingComponent);
+            if (WebDriverConfiguration.RemoteWebdriverRemoteQuietExceptions != null) options.AddAdditionalCapability("webdriver.remote.quietExceptions", WebDriverConfiguration.RemoteWebdriverRemoteQuietExceptions);
 
-            return capabilities;
+            return options;
         }
     }
 }
